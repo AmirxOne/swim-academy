@@ -40,6 +40,10 @@
 
 html {
   font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  /* Mobile: prevent text size adjust */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -48,9 +52,11 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Mobile: prevent overscroll bounce */
+  overscroll-behavior-y: none;
 }
 
-/* RTL: make sure number inputs don't show spinners on mobile */
+/* RTL: number inputs */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -60,12 +66,12 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+/* Safe area for notch phones */
+body {
+  padding-top: env(safe-area-inset-top);
 }
 
-/* Hide scrollbar utility */
+/* Hide scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -88,4 +94,15 @@ html {
 
 .animate-in {
   animation: fade-in 0.2s ease-out;
+}
+
+/* Calendar cells: borderless with gap separation */
+.cal-cell {
+  border: none !important;
+  border-radius: 12px;
+}
+
+/* Smooth touch interactions */
+button, a {
+  touch-action: manipulation;
 }
