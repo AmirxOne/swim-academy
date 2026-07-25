@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Student {
+  id          String       @id @default(cuid())
+  name        String
+  phone       String?
+  type        String       @default("SEMI_PRIVATE")
+  status      String       @default("ACTIVE")
+  notes       String?
+  shareToken  String       @unique @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  enrollments Enrollment[]
+  sessions    Session[]
+  payments    Payment[]
+}
+
+model Enrollment {
+  id              String    @id @default(cuid())
+  studentId       String
+  student         Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classType       String    @default("SEMI_PRIVATE")
+  dayType         String    @default("ODD")
+  startTime       String
+  endTime         String?
+  startDate       String
+  totalSessions   Int       @default(10)
+  pricePerSession Int?
+  notes           String?
+  status          String    @default("ACTIVE")
+  createdAt       DateTime  @default(now())
+  sessions        Session[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  studentId    String
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  enrollmentId String?
+  enrollment   Enrollment? @relation(fields: [enrollmentId], references: [id])
+  date         String
+  status       String   @default("PENDING")
+  note         String?
+  createdAt    DateTime @default(now())
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount    Int
+  type      String   @default("TUITION")
+  status    String   @default("PAID")
+  date      String
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model Settings {
+  id                String   @id @default("singleton")
+  instructorName    String   @default("مربی شنا")
+  poolName          String   @default("استخر ۹ دی")
+  semiPrivateShare  Float    @default(0.315)
+  unregisteredShare Float    @default(0.35)
+  privateShare      Float    @default(0.45)
+  semiPrivatePrice  Int      @default(2205000)
+  unregisteredPrice Int      @default(2450000)
+  privateKey        Int      @default(3825000)
+  adminPasswordHash String   @default("admin123")
+  updatedAt         DateTime @updatedAt
+}
